@@ -1,0 +1,17 @@
+{% extends 'polls/base.html' %}
+
+{% block content %}
+
+
+<h1>Inicio</h1>
+
+<br>
+
+<h1>{% if request.user.is_authenticated %}</h1>
+            <hr>
+        <h4>
+            {{ user.username | upper}}, bienvenido
+        </h4>
+        {% endif %}
+
+{% endblock %}
