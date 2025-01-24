@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <form action="{% url 'polls:vote' question.id %}" method="post">
     {% csrf_token %}
     <fieldset>
@@ -11,5 +10,13 @@
             <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
         {% endfor %}
     </fieldset>
-    <input type="submit" value="Vote">
-    </form>
+    <input type="submit" value="Votar">
+</form>
+
+{% if user_vote %}
+<form action="{% url 'polls:delete_vote' question.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" class="btn btn-danger mt-3" value="Borrar">
+</form>
+{% endif %}
+<!-- #modificado -->

@@ -4,12 +4,17 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from .models import Choice, Question
+from .models import Choice, Question, Vote
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
+#mdodificado
+
 def home(request):
-    return render(request, 'polls/home.html')
+    latest_vote = Vote.objects.select_related("question").order_by("-vote_date").first()
+    context = {"latest_question": latest_vote.question if latest_vote else None}
+    return render(request, "polls/home.html", context)
+
 
 def exit(request):
     logout(request)
@@ -43,13 +48,14 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = "polls/results.html"
 
+
+#modificado y creado
 @login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
     except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
         return render(
             request,
             "polls/detail.html",
@@ -58,10 +64,29 @@ def vote(request, question_id):
                 "error_message": "You didn't select a choice.",
             },
         )
-    else:
-        selected_choice.votes = F("votes") + 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+    
+    # Verificar si el usuario ya votó en esta pregunta
+    existing_vote = Vote.objects.filter(user=request.user, question=question).first()
+    if existing_vote:
+        # Borrar el voto si ya existe
+        existing_vote.delete()
+
+    # Registrar el nuevo voto
+    Vote.objects.create(user=request.user, choice=selected_choice, question=question)
+    selected_choice.votes = F("votes") + 1
+    selected_choice.save()
+
+    return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+
+    
+
+
+@login_required
+def delete_vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    vote = Vote.objects.filter(user=request.user, question=question).first()
+    if vote:
+        vote.choice.votes = F("votes") - 1
+        vote.choice.save()
+        vote.delete()
+    return HttpResponseRedirect(reverse("polls:detail", args=(question.id,)))

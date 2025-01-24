@@ -1,17 +1,21 @@
+
 {% extends 'polls/base.html' %}
 
 {% block content %}
 
-
 <h1>Inicio</h1>
+<hr>
 
-<br>
+{% if request.user.is_authenticated %}
+<h4>Bienvenido, {{ user.username | upper }}</h4>
+{% endif %}
 
-<h1>{% if request.user.is_authenticated %}</h1>
-            <hr>
-        <h4>
-            {{ user.username | upper}}, bienvenido
-        </h4>
-        {% endif %}
+{% if latest_answered_question %}
+<h3>Última encuesta contestada:</h3>
+<p>
+    <a href="{% url 'polls:detail' latest_answered_question.id %}">{{ latest_answered_question.question_text }}</a>
+</p>
+{% endif %}
 
 {% endblock %}
+<!-- #modificado -->

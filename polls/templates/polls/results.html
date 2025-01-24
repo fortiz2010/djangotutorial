@@ -1,12 +1,18 @@
 {% load static %}
 
-
 <h1>{{ question.question_text }}</h1>
+
+{% if user_vote %}
+<p>¡Gracias por participar! Tu respuesta fue: {{ user_vote.choice_text }}</p>
+{% endif %}
 
 <ul>
 {% for choice in question.choice_set.all %}
-    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    <li>{{ choice.choice_text }} -- {{ choice.votes }} voto{{ choice.votes|pluralize }}</li>
 {% endfor %}
 </ul>
 
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+<a href="{% url 'polls:detail' question.id %}">¿Votar otra vez?</a>
+
+
+<!-- #modificado -->
