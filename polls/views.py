@@ -9,7 +9,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 def home(request):
-    return render(request, 'polls/home.html')
+    latest_question = None
+    if request.user.is_authenticated:
+        for question in Question.objects.order_by('-pub_date'): # Obtener la última pregunta que el usuario ha votado
+            for choice in question.choice_set.all():
+                if request.user in choice.voted_by.all():
+                    latest_question = question
+                    break
+            if latest_question:
+                break
+    return render(request, 'polls/home.html', {'latest_question': latest_question})
+
 
 def exit(request):
     logout(request)
@@ -60,8 +70,24 @@ def vote(request, question_id):
         )
     else:
         selected_choice.votes = F("votes") + 1
+        selected_choice.voted_by.add(request.user)
         selected_choice.save()
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+    
+@login_required
+def delete_vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    user = request.user
+
+    # Buscar la opción que el usuario votó
+    for choice in question.choice_set.all():
+        if user in choice.voted_by.all():
+            choice.votes = F("votes") - 1
+            choice.voted_by.remove(user)
+            choice.save()
+            break
+
+    return HttpResponseRedirect(reverse("polls:detail", args=(question.id,)))
