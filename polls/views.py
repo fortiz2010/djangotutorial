@@ -56,6 +56,15 @@ class ResultsView(generic.DetailView):
 @login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
+    if not question.is_active:
+        return render(
+            request,
+            "polls/detail.html",
+            {
+                "question": question,
+                "error_message": "Esta deshabilitada la pregunta"
+            }
+        )
     try:
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
     except (KeyError, Choice.DoesNotExist):
@@ -65,7 +74,7 @@ def vote(request, question_id):
             "polls/detail.html",
             {
                 "question": question,
-                "error_message": "You didn't select a choice.",
+                "error_message": "No seleccionaste la pregunta.",
             },
         )
     else:
@@ -91,3 +100,12 @@ def delete_vote(request, question_id):
             break
 
     return HttpResponseRedirect(reverse("polls:detail", args=(question.id,)))
+
+@login_required
+def disable_poll(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    if request.user == question.created_by:
+        question.is_active = False
+        question.save()
+    return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+

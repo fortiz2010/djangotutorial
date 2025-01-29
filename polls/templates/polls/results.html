@@ -16,6 +16,14 @@
     </form>
 {% endif %}
 
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+{% if user == question.created_by and question.is_active %}
+    <form action="{% url 'polls:disable_poll' question.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning">Deshabilitar encuesta</button>
+    </form>
+{% endif %}
+
+
+<a href="{% url 'polls:index' %}">Return to index</a>
 
 
