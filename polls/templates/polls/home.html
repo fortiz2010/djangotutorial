@@ -2,13 +2,14 @@
 
 {% block content %}
 
+{% load static %}
 
 <h1>Inicio</h1>
 
 <br>
 
 <h1>{% if request.user.is_authenticated %}</h1>
-            <hr>
+<hr>
         <h4>
             {{ user.username | upper}}, bienvenido
         </h4>

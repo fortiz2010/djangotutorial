@@ -6,6 +6,9 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 # Create your models here.
+#modelo question con los campos question_text, pub_date, is_active, 
+#created_by, contiene las funciones para mandar llamar el texto de la pregunta cuando consulte y la funcion para saber cuales fueron
+#publicadas recientemente
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField("date publisher")
@@ -24,7 +27,7 @@ class Question(models.Model):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.pub_date <= now
     
-
+#modelo Choice contiene los campos question(id), choice_text, votes, voted_by contiene la funcion para llamar el texto de la pregunta cuando se consulte
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)

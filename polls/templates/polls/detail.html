@@ -19,9 +19,14 @@
             {% endfor %}
         {% endif %}
     </fieldset>
-    {% if question.is_active %}
+    {% if question.is_active and not user_has_voted %}
         <input type="submit" value="Vote">
     {% endif %}
 </form>
 
+{% if user_has_voted %}
+    <p>Ya has votado en esta encuesta. <a href="{% url 'polls:delete_vote' question.id %}">Borrar mi voto</a></p>
+{% endif %}
+
 {% endblock %}
+

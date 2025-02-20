@@ -21,6 +21,9 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-warning">Deshabilitar encuesta</button>
     </form>
+{% elif user == question.created_by and question.is_active == False%}
+    <strong>aqui deberia ir un boto para habilitar</strong>
+    <hr>
 {% endif %}
 
 

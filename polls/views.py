@@ -6,8 +6,9 @@ from django.views import generic
 from django.utils import timezone
 from .models import Choice, Question
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.contrib.auth import logout##
 
+#funcion de la vista home muestra la ultima pregunta que el usuario respondio y muestra la plantilla home.html
 def home(request):
     latest_question = None
     if request.user.is_authenticated:
@@ -25,6 +26,7 @@ def exit(request):
     logout(request)
     return redirect('polls:home')
 
+#vista encargada de mostrar la plantilla index y de mostrar las preguntas publicadas en la aplicacion
 class IndexView(generic.ListView):
     template_name = "polls/index.html"
     context_object_name = "latest_question_list"
@@ -37,10 +39,26 @@ class IndexView(generic.ListView):
         
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[:5]
 
-
+#vista encargada de mostrar los detalles de mostrar los detalles de la pregunta que se busque responder
 class DetailView(generic.DetailView):
     model = Question
     template_name = "polls/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        question = self.get_object()
+
+        # Verificar si el usuario ya votó en esta encuesta
+        user_has_voted = False
+        if user.is_authenticated:
+            for choice in question.choice_set.all():
+                if user in choice.voted_by.all():
+                    user_has_voted = True
+                    break
+
+        context['user_has_voted'] = user_has_voted
+        return context
 
     def get_queryset(self):
         """
@@ -49,42 +67,61 @@ class DetailView(generic.DetailView):
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
+#vista encargada de mostrar los resultados de las votaciones de la preguntas
 class ResultsView(generic.DetailView):
     model = Question
     template_name = "polls/results.html"
 
+#esta funcion solo podra hacerse si es que esta logueado el usuario
 @login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
+    user = request.user
+
+    # Verificar si el usuario ya votó en esta encuesta
+    user_has_voted = False
+    for choice in question.choice_set.all():
+        if user in choice.voted_by.all():
+            user_has_voted = True
+            break
+
+    if user_has_voted:
+        return render(
+            request,
+            "polls/detail.html",
+            {
+                "question": question,
+                "error_message": "Ya has votado en esta encuesta. Borra tu voto para votar nuevamente.",
+            },
+        )
+
     if not question.is_active:
         return render(
             request,
             "polls/detail.html",
             {
                 "question": question,
-                "error_message": "Esta deshabilitada la pregunta"
-            }
+                "error_message": "Esta encuesta ha sido deshabilitada.",
+            },
         )
+
     try:
         selected_choice = question.choice_set.get(pk=request.POST["choice"])
     except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
         return render(
             request,
             "polls/detail.html",
             {
                 "question": question,
-                "error_message": "No seleccionaste la pregunta.",
+                "error_message": "No seleccionaste una opción.",
             },
         )
     else:
         selected_choice.votes = F("votes") + 1
-        selected_choice.voted_by.add(request.user)
+        selected_choice.voted_by.add(user)
         selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
         return HttpResponseRedirect(reverse("polls:results", args=(question.id,)))
+
     
 @login_required
 def delete_vote(request, question_id):

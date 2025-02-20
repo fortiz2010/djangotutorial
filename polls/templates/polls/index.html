@@ -11,12 +11,13 @@
 {% if latest_question_list %}
 	<ul>
 	{% for question in latest_question_list %}
-		{% if not question.is_active %}
-			<li><a href="{% url 'polls:results' question.id %}">{{ question.question_text }}</a></li>
-		{% else %}
-		   	<li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+	
+			{% if not question.is_active %}
+				<li><a href="{% url 'polls:results' question.id %}">{{ question.question_text }}</a></li>
+			{% else %}
+				<li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
 
-	   {% endif %}
+			{% endif %}
 	{% endfor %}
 	</ul>
 {% else %}

@@ -1,74 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    {% load static %}
+      {% load static %}
 
-<link rel="stylesheet" href="{% static 'polls/style.css' %}">
-    
-    <title>Aplicación</title>
-</head>
-<body>
-    <div class="container">
-
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="{% url 'polls:home' %}">Proyecto</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'polls:home' %}">INICIO</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'polls:index' %}">POLLS</a>
-                  </li>
-
-                  {% if request.user.is_authenticated %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Crear Encuestas</a>
-                  </li>
-                  {% else %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Registrar</a>
-                  </li>
-                  {% endif %}
-
-                  
-                  {% if request.user.is_authenticated %}
-                  <li class="nav-item">
+      <link rel="stylesheet" href="{% static 'polls/style.css' %}">
+      
+      <title>Tutorial de DJango</title>
+  </head>
+  <body>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'polls:home' %}">Proyecto</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'polls:home' %}">INICIO</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'polls:index' %}">POLLS</a>
+              </li>
+              {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Crear Encuestas</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Registrar</a>
+                </li>
+              {% endif %}
+                
+              {% if request.user.is_authenticated %}
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'polls:exit' %}">Salir</a>
-                  </li>
-                  {% else %}
-                  <li class="nav-item">
+                </li>
+              {% else %}
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'login' %}">Ingresar</a>
-                  </li>
-                  {% endif %}
-                </ul>
-              </div>
-            </div>
-          </nav>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+      </div>
+    </nav>
 
-    <ul>
-        <li><a href="{% url 'polls:home' %}">Inicio</a></li>
-        <li><a href="{% url 'polls:index' %}">Polls</a></li>
-
-        {% if request.user.is_authenticated %}
-            <li><a href="{% url 'polls:exit' %}">Salir</a></li>
-        {% else %}
-        <li><a href="{% url 'login' %}">Ingresar</a></li>
-        {% endif %}
-        
-    </ul>
-
-    {% block content %}{% endblock %}
-
-</div>
-</body>
+      {% block content %}{% endblock %}
+  </body>
 </html>
