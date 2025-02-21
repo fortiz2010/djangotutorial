@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Question, Choice
-
+#sitio del admin
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 2
