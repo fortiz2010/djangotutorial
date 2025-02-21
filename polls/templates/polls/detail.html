@@ -4,28 +4,33 @@
 
 {% load static %}
 
-<form action="{% url 'polls:vote' question.id %}" method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend><h1>{{ question.question_text }}</h1></legend>
-        {% if not question.is_active %}
-            <p><strong>Esta encuesta ha sido deshabilitada.</strong></p>
-        {% elif error_message %}
-            <p><strong>{{ error_message }}</strong></p>
-        {% else %}
-            {% for choice in question.choice_set.all %}
-                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-            {% endfor %}
-        {% endif %}
-    </fieldset>
-    {% if question.is_active and not user_has_voted %}
-        <input type="submit" value="Vote">
-    {% endif %}
-</form>
+<link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
-{% if user_has_voted %}
-    <p>Ya has votado en esta encuesta. <a href="{% url 'polls:delete_vote' question.id %}">Borrar mi voto</a></p>
+{% if question.is_active and user_has_voted %}
+    <p>Ya has votado en esta encuesta. <hr>
+        <a href="{% url 'polls:delete_vote' question.id %}">Borrar mi voto</a>
+    </p>
+
+{% else %}
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><h1>{{ question.question_text }}</h1></legend>
+            {% if not question.is_active %}
+                <p><strong>Esta encuesta ha sido deshabilitada.</strong></p>
+            {% elif error_message %}
+                <p><strong>{{ error_message }}</strong></p>
+            {% else %}
+                {% for choice in question.choice_set.all %}
+                    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                {% endfor %}
+            {% endif %}
+        </fieldset>
+        {% if question.is_active and not user_has_voted %}
+            <input type="submit" value="Vote">
+        {% endif %}
+    </form>
 {% endif %}
 
 {% endblock %}

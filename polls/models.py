@@ -32,7 +32,7 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
-    voted_by = models.ManyToManyField(User, blank=True)
+    voted_by = models.ManyToManyField(User, blank=True)#este tipo de campo lo que hace es generar una tabla intermeedia para 
 
     def __str__(self):
         return self.choice_text
