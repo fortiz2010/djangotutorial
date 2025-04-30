@@ -1,9 +1,9 @@
 li {
-    color: rgb(255, 255, 255);
+    color: white;
 }
 
 li a {
-    color: rgb(255, 255, 255);
+    color: white;
 }
 
 div.container {
@@ -14,7 +14,14 @@ h1 {
     color:white;
 }
 
+body {
+    background: white url("images/background2.jpg") no-repeat;
+}
 
 label {
     color:white;
+}
+
+p {
+    color: white;
 }

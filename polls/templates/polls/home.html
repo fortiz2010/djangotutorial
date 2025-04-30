@@ -2,16 +2,27 @@
 
 {% block content %}
 
+{% load static %}
 
 <h1>Inicio</h1>
 
 <br>
 
 <h1>{% if request.user.is_authenticated %}</h1>
-            <hr>
+<hr>
         <h4>
             {{ user.username | upper}}, bienvenido
         </h4>
         {% endif %}
+
+    <h1>Ultima contestada</h1>
+
+    {% if latest_question %}
+        <h2>Última encuesta contestada:</h2>
+        <p><a href="{% url 'polls:detail' latest_question.id %}">{{ latest_question.question_text }}</a></p>
+    {% else %}
+        <p>No has contestado ninguna encuesta.</p>
+    {% endif %}
+    
 
 {% endblock %}

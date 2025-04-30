@@ -9,4 +9,24 @@
 {% endfor %}
 </ul>
 
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+{% if user.is_authenticated %}
+    <form action="{% url 'polls:delete_vote' question.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Borrar mi voto</button>
+    </form>
+{% endif %}
+
+{% if user == question.created_by and question.is_active %}
+    <form action="{% url 'polls:disable_poll' question.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning">Deshabilitar encuesta</button>
+    </form>
+{% elif user == question.created_by and question.is_active == False%}
+    <strong>aqui deberia ir un boto para habilitar</strong>
+    <hr>
+{% endif %}
+
+
+<a href="{% url 'polls:index' %}">Return to index</a>
+
+
